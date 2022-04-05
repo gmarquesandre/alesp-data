@@ -10,6 +10,5 @@ namespace Alesp.Shared
         public int CNPJ { get; set; }
         public string? CompanyName { get; set; }
         public decimal ShareCapital { get; set; }
-        public List<Legislature>? Legislatures { get; set; }
     }
 }

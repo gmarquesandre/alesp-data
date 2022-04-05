@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -46,17 +45,11 @@ namespace Alesp.Api.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Number = table.Column<int>(type: "int", nullable: false),
                     StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CompanyId = table.Column<int>(type: "int", nullable: true)
+                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Legislatures", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Legislatures_Companies_CompanyId",
-                        column: x => x.CompanyId,
-                        principalTable: "Companies",
-                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -117,9 +110,10 @@ namespace Alesp.Api.Migrations
                 column: "LegislaturesId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Legislatures_CompanyId",
+                name: "IX_Legislatures_Number",
                 table: "Legislatures",
-                column: "CompanyId");
+                column: "Number",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Spendings_CompanyId",
@@ -144,10 +138,10 @@ namespace Alesp.Api.Migrations
                 name: "Legislatures");
 
             migrationBuilder.DropTable(
-                name: "CongressPeople");
+                name: "Companies");
 
             migrationBuilder.DropTable(
-                name: "Companies");
+                name: "CongressPeople");
         }
     }
 }

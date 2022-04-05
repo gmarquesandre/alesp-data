@@ -25,9 +25,19 @@ public class AlespDbContext : DbContext
             modelBuilder.Entity<Legislature>()
                     .HasIndex(p => new { p.Number})
                     .IsUnique(true);
-        }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder options)
+
+            modelBuilder.Entity<Legislature>()
+                .HasMany(c => c.CongressPeople)
+                .WithMany(e => e.Legislatures);
+
+            modelBuilder.Entity<Spending>()
+                .HasOne(b => b.CongressPerson)
+                .WithMany();
+
+    }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
             IConfigurationRoot configuration = new ConfigurationBuilder()
             .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)

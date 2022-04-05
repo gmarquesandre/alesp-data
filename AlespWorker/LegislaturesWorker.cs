@@ -9,6 +9,11 @@ namespace Alesp.Worker
 
         private HttpClient Client = new();
         private HtmlParser Parser = new();
+        //private AlespDbContext _context;
+        //public LegislaturesWorker(AlespDbContext context)
+        //{
+        //    _context = context;
+        //}
         public async Task GetLesgilatures()
         {
 
@@ -18,7 +23,7 @@ namespace Alesp.Worker
             var legislaturesDocuments = document.QuerySelectorAll("select[name = 'idLegislatura'] option");
 
 
-            foreach(var legislature in legislaturesDocuments.Skip(1))
+            foreach(var legislature in legislaturesDocuments.Skip(1).Reverse())
             {
 
                 var newLegislature = GetLegislature(legislature);
@@ -28,16 +33,17 @@ namespace Alesp.Worker
             }   
 
         }
-        private static void TryToAddLegislature(Legislature newLegislature)
+        private void TryToAddLegislature(Legislature newLegislature)
         {
-            using var context = new AlespDbContext();
-            var legislatureFind = context.Legislatures.FirstOrDefault(a => a.Number == newLegislature.Number);
+            using var _context = new AlespDbContext();
+
+            var legislatureFind = _context.Legislatures.FirstOrDefault(a => a.Number == newLegislature.Number);
 
             if (legislatureFind == null)
-                context.Legislatures.Add(newLegislature);
+                _context.Legislatures.Add(newLegislature);
 
 
-            context.SaveChanges();
+            _context.SaveChanges();
         }
         private Legislature GetLegislature(IElement legislature)
         {

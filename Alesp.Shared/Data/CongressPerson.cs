@@ -8,6 +8,6 @@ namespace Alesp.Shared
         public int Id { get; set; }
         public string? Name { get; set; }
         public int AlespId { get; set; }
-        public List<Legislature>? Legislatures { get; set; }
+        public ICollection<Legislature> Legislatures { get; set; }
     }
 }

@@ -71,9 +71,6 @@ namespace Alesp.Api.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int?>("CompanyId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
 
@@ -85,7 +82,8 @@ namespace Alesp.Api.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CompanyId");
+                    b.HasIndex("Number")
+                        .IsUnique();
 
                     b.ToTable("Legislatures");
                 });
@@ -134,13 +132,6 @@ namespace Alesp.Api.Migrations
                     b.ToTable("CongressPersonLegislature");
                 });
 
-            modelBuilder.Entity("Alesp.Shared.Legislature", b =>
-                {
-                    b.HasOne("Alesp.Shared.Company", null)
-                        .WithMany("Legislatures")
-                        .HasForeignKey("CompanyId");
-                });
-
             modelBuilder.Entity("Alesp.Shared.Spending", b =>
                 {
                     b.HasOne("Alesp.Shared.Company", "Company")
@@ -173,11 +164,6 @@ namespace Alesp.Api.Migrations
                         .HasForeignKey("LegislaturesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Alesp.Shared.Company", b =>
-                {
-                    b.Navigation("Legislatures");
                 });
 #pragma warning restore 612, 618
         }
