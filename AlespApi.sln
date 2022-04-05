@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32112.339
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Alesp.Api", "AlespApi\Alesp.Api.csproj", "{F4D6F533-044D-4A0F-8C60-1E73416144C4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Alesp.Worker", "AlespWorker\Alesp.Worker.csproj", "{1C99F26F-DABB-454F-8EEE-B4AD356052A0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Alesp.Shared", "Alesp.Shared\Alesp.Shared.csproj", "{994DAACF-6871-4156-AEE1-F256DBD411A0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F4D6F533-044D-4A0F-8C60-1E73416144C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F4D6F533-044D-4A0F-8C60-1E73416144C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F4D6F533-044D-4A0F-8C60-1E73416144C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F4D6F533-044D-4A0F-8C60-1E73416144C4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1C99F26F-DABB-454F-8EEE-B4AD356052A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1C99F26F-DABB-454F-8EEE-B4AD356052A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1C99F26F-DABB-454F-8EEE-B4AD356052A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1C99F26F-DABB-454F-8EEE-B4AD356052A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{994DAACF-6871-4156-AEE1-F256DBD411A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{994DAACF-6871-4156-AEE1-F256DBD411A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{994DAACF-6871-4156-AEE1-F256DBD411A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{994DAACF-6871-4156-AEE1-F256DBD411A0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C1ABA135-023F-4780-8456-AEC6CFC46E58}
+	EndGlobalSection
+EndGlobal
