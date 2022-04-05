@@ -5,5 +5,7 @@ await legislatureWorker.GetLesgilatures();
 
 
 var congressPersonWorker = new CongressPersonWorker();
+await congressPersonWorker.GetCongressPeople();
+
 
 

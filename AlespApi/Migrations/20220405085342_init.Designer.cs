@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Alesp.Api.Migrations
 {
     [DbContext(typeof(AlespDbContext))]
-    [Migration("20220405040246_init")]
+    [Migration("20220405085342_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

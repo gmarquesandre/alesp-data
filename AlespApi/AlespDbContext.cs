@@ -27,7 +27,7 @@ public class AlespDbContext : DbContext
                     .IsUnique(true);
 
 
-            modelBuilder.Entity<Legislature>()
+        modelBuilder.Entity<Legislature>()
                 .HasMany(c => c.CongressPeople)
                 .WithMany(e => e.Legislatures);
 

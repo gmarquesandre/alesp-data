@@ -28,12 +28,12 @@ namespace Alesp.Worker
 
                 var newLegislature = GetLegislature(legislature);
 
-                TryToAddLegislature(newLegislature);
+                TryToAddLegislatureAsync(newLegislature);
 
             }   
 
         }
-        private void TryToAddLegislature(Legislature newLegislature)
+        private async Task TryToAddLegislatureAsync(Legislature newLegislature)
         {
             using var _context = new AlespDbContext();
 
