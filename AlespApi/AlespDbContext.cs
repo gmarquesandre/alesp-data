@@ -25,11 +25,10 @@ public class AlespDbContext : DbContext
             modelBuilder.Entity<Legislature>()
                     .HasIndex(p => new { p.Number})
                     .IsUnique(true);
-        
-            modelBuilder.Entity<Spending>()
-                    .HasIndex(p => new { p.CongressPerson, p.Date, p.Type, p.Company})
-                    .IsUnique(true);
 
+            modelBuilder.Entity<Spending>()
+                    .HasIndex(p => new { p.CongressPersonId, p.Date, p.Type, p.CompanyId})
+                    .IsUnique(true);
 
             modelBuilder.Entity<Legislature>()
                 .HasMany(c => c.CongressPeople)

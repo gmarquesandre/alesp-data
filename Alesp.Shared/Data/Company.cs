@@ -7,7 +7,7 @@ namespace Alesp.Shared
         [Key]
         public int Id { get; set; }
         [MaxLength(14)]
-        public int CNPJ { get; set; }
+        public string CNPJ { get; set; }
         public string? CompanyName { get; set; }
         public decimal ShareCapital { get; set; }
     }

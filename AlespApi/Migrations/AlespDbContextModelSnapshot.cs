@@ -29,9 +29,10 @@ namespace Alesp.Api.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("CNPJ")
+                    b.Property<string>("CNPJ")
+                        .IsRequired()
                         .HasMaxLength(14)
-                        .HasColumnType("int");
+                        .HasColumnType("nvarchar(14)");
 
                     b.Property<string>("CompanyName")
                         .HasColumnType("nvarchar(max)");
@@ -55,7 +56,16 @@ namespace Alesp.Api.Migrations
                     b.Property<int>("AlespId")
                         .HasColumnType("int");
 
+                    b.Property<string>("AreasOfWork")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RegionDescription")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -105,6 +115,9 @@ namespace Alesp.Api.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
                     b.Property<decimal>("Value")
                         .HasColumnType("decimal(18,2)");
 
@@ -112,7 +125,8 @@ namespace Alesp.Api.Migrations
 
                     b.HasIndex("CompanyId");
 
-                    b.HasIndex("CongressPersonId");
+                    b.HasIndex("CongressPersonId", "Date", "Type", "CompanyId")
+                        .IsUnique();
 
                     b.ToTable("Spendings");
                 });

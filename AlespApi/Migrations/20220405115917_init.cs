@@ -15,7 +15,7 @@ namespace Alesp.Api.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    CNPJ = table.Column<int>(type: "int", maxLength: 14, nullable: false),
+                    CNPJ = table.Column<string>(type: "nvarchar(14)", maxLength: 14, nullable: false),
                     CompanyName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ShareCapital = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
                 },
@@ -31,6 +31,9 @@ namespace Alesp.Api.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    RegionDescription = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    AreasOfWork = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     AlespId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -62,7 +65,8 @@ namespace Alesp.Api.Migrations
                     CompanyId = table.Column<int>(type: "int", nullable: false),
                     Value = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Date = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CongressPersonId = table.Column<int>(type: "int", nullable: false)
+                    CongressPersonId = table.Column<int>(type: "int", nullable: false),
+                    Type = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -122,9 +126,10 @@ namespace Alesp.Api.Migrations
                 column: "CompanyId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Spendings_CongressPersonId",
+                name: "IX_Spendings_CongressPersonId_Date_Type_CompanyId",
                 table: "Spendings",
-                column: "CongressPersonId");
+                columns: new[] { "CongressPersonId", "Date", "Type", "CompanyId" },
+                unique: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
