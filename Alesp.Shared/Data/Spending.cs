@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Alesp.Shared.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace Alesp.Shared
 {
@@ -10,5 +11,6 @@ namespace Alesp.Shared
         public decimal Value { get; set; }
         public DateTime Date { get; set; }
         public CongressPerson CongressPerson { get; set; }
+        public ESpendingType Type { get; set; }
     }
 }
