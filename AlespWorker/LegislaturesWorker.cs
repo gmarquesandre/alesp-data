@@ -33,7 +33,7 @@ namespace Alesp.Worker
             }   
 
         }
-        private async Task TryToAddLegislatureAsync(Legislature newLegislature)
+        private void TryToAddLegislatureAsync(Legislature newLegislature)
         {
             using var _context = new AlespDbContext();
 

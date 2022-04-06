@@ -88,7 +88,6 @@ namespace Alesp.Api.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ProviderId = table.Column<int>(type: "int", nullable: false),
-                    CompanyId = table.Column<int>(type: "int", nullable: false),
                     Value = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CongressPersonId = table.Column<int>(type: "int", nullable: false),
@@ -123,9 +122,9 @@ namespace Alesp.Api.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Spendings_CongressPersonId_Date_Type_CompanyId",
+                name: "IX_Spendings_CongressPersonId_Date_Type_ProviderId",
                 table: "Spendings",
-                columns: new[] { "CongressPersonId", "Date", "Type", "CompanyId" },
+                columns: new[] { "CongressPersonId", "Date", "Type", "ProviderId" },
                 unique: true);
 
             migrationBuilder.CreateIndex(

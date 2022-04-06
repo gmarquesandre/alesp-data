@@ -109,9 +109,6 @@ namespace Alesp.Api.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("CompanyId")
-                        .HasColumnType("int");
-
                     b.Property<int>("CongressPersonId")
                         .HasColumnType("int");
 
@@ -131,7 +128,7 @@ namespace Alesp.Api.Migrations
 
                     b.HasIndex("ProviderId");
 
-                    b.HasIndex("CongressPersonId", "Date", "Type", "CompanyId")
+                    b.HasIndex("CongressPersonId", "Date", "Type", "ProviderId")
                         .IsUnique();
 
                     b.ToTable("Spendings");

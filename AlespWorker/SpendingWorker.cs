@@ -22,7 +22,7 @@ internal class SpendingWorker
         using var _context = new AlespDbContext();
         
         var congressPeople = _context.CongressPeople
-            .Include(a=> a.Legislatures)
+            .Include(a=> a.Legislatures.Where(a=> a.StartDate >= new DateTime(2002,1,1)))
             .ToList();
 
         foreach(var congressPerson in congressPeople)
@@ -103,9 +103,10 @@ internal class SpendingWorker
                                     IdentificationType = GetIdentificationType(identification)
                                 };
 
-                                _context.Providers.Add(newCompany);
+                                await _context.Providers.AddAsync(newCompany);
+                                await _context.SaveChangesAsync();
 
-                                newSpending.Provider = newCompany;
+                                newSpending.Provider = await _context.Providers.FirstOrDefaultAsync(a => a.Identification == identification); ;
 
 
                                 _context.Spendings.Add(newSpending);
@@ -133,6 +134,7 @@ internal class SpendingWorker
             return EProviderIdentificationType.Cpf;
         }
 
-        throw new Exception($"{identification} não é CPF nem CNPJ");
+        Console.WriteLine($"{identification} não é CPF nem CNPJ");
+        return EProviderIdentificationType.Unknown;
     }
 }

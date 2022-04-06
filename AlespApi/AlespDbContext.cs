@@ -27,7 +27,7 @@ public class AlespDbContext : DbContext
                     .IsUnique(true);
 
             modelBuilder.Entity<Spending>()
-                    .HasIndex(p => new { p.CongressPersonId, p.Date, p.Type, p.CompanyId})
+                    .HasIndex(p => new { p.CongressPersonId, p.Date, p.Type, p.ProviderId})
                     .IsUnique(true);
 
             modelBuilder.Entity<Legislature>()

@@ -39,9 +39,7 @@ public class CongressPersonWorker
 
                 if (congressPersonRow != null)
                 {
-                    congressPersonRow.Legislatures.Add(legislature);
-
-
+                    
                     _context.CongressPeople.Update(congressPersonRow);
                     _context.SaveChanges();
                 }
