@@ -1,5 +1,6 @@
 ﻿using Alesp.Shared;
 using Alesp.Shared.Enums;
+using Alesp.Shared.Validators;
 using AngleSharp.Html.Parser;
 using Microsoft.EntityFrameworkCore;
 using System.Globalization;
@@ -21,8 +22,7 @@ internal class SpendingWorker
         using var _context = new AlespDbContext();
         
         var congressPeople = _context.CongressPeople
-            .Include(a=> a.Legislatures.Where(a=> a.StartDate >= new DateTime(2015,1,1)))
-            .Where(a=> a.Name == "Heni Ozi Cukier")
+            .Include(a=> a.Legislatures)
             .ToList();
 
         foreach(var congressPerson in congressPeople)
@@ -56,17 +56,15 @@ internal class SpendingWorker
                         var rowsSpendingCompanies = document.QuerySelectorAll(".tabel,.sortable tbody tr");
                         foreach(var rowCompany in rowsSpendingCompanies)
                         {
-                            
-                            string name = rowCompany.QuerySelectorAll("td a")[0].TextContent.Replace("\n","").Replace("\t", "").Trim();
-                            string cnpj = rowCompany.QuerySelectorAll("td a")[1].TextContent.Replace("\n", "").Replace("\t", "").Replace("/","").Replace("-", "").Replace(".", "").Trim();
+
+                            string name = rowCompany.QuerySelectorAll("td a")[0].TextContent.Replace("\n", "").Replace("\t", "").Trim();
+                            string identification = rowCompany.QuerySelectorAll("td a")[1].TextContent.Replace("\n", "").Replace("\t", "").Replace("/", "").Replace("-", "").Replace(".", "").Trim();
                             decimal value = Convert.ToDecimal(rowCompany.QuerySelectorAll("td span")[0].TextContent.Replace("\n", "").Replace("\t", "").Trim(), _cultureInfo);
-                            
-                            if (cnpj.Length < 14)
-                                throw new Exception($"Cnpj {cnpj} é inválido");
 
-                            int type = Convert.ToInt32(new Regex("(?<=idTipo=)(.*?)(?>&)").Match(url).ToString());
 
-                            
+                            int type = Convert.ToInt32(new Regex("(?<=idTipo=)(.*?)(?=&)").Match(url).ToString());
+
+
                             var newSpending = new Spending()
                             {
                                 Date = new DateTime(dateRef.Year, dateRef.Month, 1),
@@ -75,26 +73,39 @@ internal class SpendingWorker
                                 CongressPerson = congressPerson
                             };
 
-                            var company = _context.Companies.FirstOrDefault(a => a.CNPJ == cnpj);
-                            
-                            
-                            if(company != null)
+
+                            var spending = _context.Spendings
+                                .Include(a => a.Provider)
+                                .FirstOrDefault(
+                                a => a.Type == (ESpendingType)type &&
+                                a.Date == new DateTime(dateRef.Year, dateRef.Month, 1) &&
+                                a.CongressPersonId == congressPerson.Id && a.Provider.Identification == identification
+                            );
+
+                            if (spending != null)
+                                continue;
+
+                            var company = _context.Providers.FirstOrDefault(a => a.Identification == identification);
+
+
+                            if (company != null)
                             {
-                                newSpending.Company = company;
+                                newSpending.Provider = company;
 
                                 _context.Spendings.Add(newSpending);
                             }
                             else
                             {
-                                Company newCompany = new()
+                                Provider newCompany = new()
                                 {
-                                    CNPJ = cnpj,
-                                    CompanyName = name
+                                    Identification = identification,
+                                    Name = name,
+                                    IdentificationType = GetIdentificationType(identification)
                                 };
 
-                                _context.Companies.Add(newCompany);
+                                _context.Providers.Add(newCompany);
 
-                                newSpending.Company = newCompany;
+                                newSpending.Provider = newCompany;
 
 
                                 _context.Spendings.Add(newSpending);
@@ -107,5 +118,21 @@ internal class SpendingWorker
                 }
             }
         }
+    }
+
+    private static EProviderIdentificationType GetIdentificationType(string identification)
+    {
+        IdentificationValidator validator = new IdentificationValidator();
+
+        if (validator.IsCnpj(identification))
+        {
+            return EProviderIdentificationType.Cnpj;
+        }
+        else if (validator.IsCpf(identification))
+        {
+            return EProviderIdentificationType.Cpf;
+        }
+
+        throw new Exception($"{identification} não é CPF nem CNPJ");
     }
 }

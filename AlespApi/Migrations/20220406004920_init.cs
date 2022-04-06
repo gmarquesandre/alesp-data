@@ -10,21 +10,6 @@ namespace Alesp.Api.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Companies",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    CNPJ = table.Column<string>(type: "nvarchar(14)", maxLength: 14, nullable: false),
-                    CompanyName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ShareCapital = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Companies", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "CongressPeople",
                 columns: table => new
                 {
@@ -57,32 +42,19 @@ namespace Alesp.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Spendings",
+                name: "Providers",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    CompanyId = table.Column<int>(type: "int", nullable: false),
-                    Value = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CongressPersonId = table.Column<int>(type: "int", nullable: false),
-                    Type = table.Column<int>(type: "int", nullable: false)
+                    Identification = table.Column<string>(type: "nvarchar(14)", maxLength: 14, nullable: false),
+                    IdentificationType = table.Column<int>(type: "int", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ShareCapital = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Spendings", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Spendings_Companies_CompanyId",
-                        column: x => x.CompanyId,
-                        principalTable: "Companies",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Spendings_CongressPeople_CongressPersonId",
-                        column: x => x.CongressPersonId,
-                        principalTable: "CongressPeople",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                    table.PrimaryKey("PK_Providers", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -109,6 +81,36 @@ namespace Alesp.Api.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Spendings",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ProviderId = table.Column<int>(type: "int", nullable: false),
+                    CompanyId = table.Column<int>(type: "int", nullable: false),
+                    Value = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CongressPersonId = table.Column<int>(type: "int", nullable: false),
+                    Type = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Spendings", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Spendings_CongressPeople_CongressPersonId",
+                        column: x => x.CongressPersonId,
+                        principalTable: "CongressPeople",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Spendings_Providers_ProviderId",
+                        column: x => x.ProviderId,
+                        principalTable: "Providers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_CongressPersonLegislature_LegislaturesId",
                 table: "CongressPersonLegislature",
@@ -121,15 +123,15 @@ namespace Alesp.Api.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Spendings_CompanyId",
-                table: "Spendings",
-                column: "CompanyId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Spendings_CongressPersonId_Date_Type_CompanyId",
                 table: "Spendings",
                 columns: new[] { "CongressPersonId", "Date", "Type", "CompanyId" },
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Spendings_ProviderId",
+                table: "Spendings",
+                column: "ProviderId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -144,10 +146,10 @@ namespace Alesp.Api.Migrations
                 name: "Legislatures");
 
             migrationBuilder.DropTable(
-                name: "Companies");
+                name: "CongressPeople");
 
             migrationBuilder.DropTable(
-                name: "CongressPeople");
+                name: "Providers");
         }
     }
 }

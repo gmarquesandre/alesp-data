@@ -21,30 +21,6 @@ namespace Alesp.Api.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("Alesp.Shared.Company", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("CNPJ")
-                        .IsRequired()
-                        .HasMaxLength(14)
-                        .HasColumnType("nvarchar(14)");
-
-                    b.Property<string>("CompanyName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("ShareCapital")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Companies");
-                });
-
             modelBuilder.Entity("Alesp.Shared.CongressPerson", b =>
                 {
                     b.Property<int>("Id")
@@ -98,6 +74,33 @@ namespace Alesp.Api.Migrations
                     b.ToTable("Legislatures");
                 });
 
+            modelBuilder.Entity("Alesp.Shared.Provider", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Identification")
+                        .IsRequired()
+                        .HasMaxLength(14)
+                        .HasColumnType("nvarchar(14)");
+
+                    b.Property<int>("IdentificationType")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("ShareCapital")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Providers");
+                });
+
             modelBuilder.Entity("Alesp.Shared.Spending", b =>
                 {
                     b.Property<int>("Id")
@@ -115,6 +118,9 @@ namespace Alesp.Api.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("ProviderId")
+                        .HasColumnType("int");
+
                     b.Property<int>("Type")
                         .HasColumnType("int");
 
@@ -123,7 +129,7 @@ namespace Alesp.Api.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CompanyId");
+                    b.HasIndex("ProviderId");
 
                     b.HasIndex("CongressPersonId", "Date", "Type", "CompanyId")
                         .IsUnique();
@@ -148,21 +154,21 @@ namespace Alesp.Api.Migrations
 
             modelBuilder.Entity("Alesp.Shared.Spending", b =>
                 {
-                    b.HasOne("Alesp.Shared.Company", "Company")
-                        .WithMany()
-                        .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Alesp.Shared.CongressPerson", "CongressPerson")
                         .WithMany()
                         .HasForeignKey("CongressPersonId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Company");
+                    b.HasOne("Alesp.Shared.Provider", "Provider")
+                        .WithMany()
+                        .HasForeignKey("ProviderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("CongressPerson");
+
+                    b.Navigation("Provider");
                 });
 
             modelBuilder.Entity("CongressPersonLegislature", b =>

@@ -7,7 +7,7 @@ namespace Alesp.Shared
     {
         [Key]
         public int Id { get; set; }
-        public Company Company { get; set; }
+        public Provider Provider { get; set; }
         public int CompanyId { get; set; }
         public decimal Value { get; set; }
         public DateTime Date { get; set; }

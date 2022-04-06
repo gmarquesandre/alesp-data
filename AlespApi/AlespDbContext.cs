@@ -16,7 +16,7 @@ public class AlespDbContext : DbContext
 
         public DbSet<CongressPerson> CongressPeople { get; set; }
         public DbSet<Legislature> Legislatures { get; set; }
-        public DbSet<Company> Companies { get; set; }
+        public DbSet<Provider> Providers { get; set; }
         public DbSet<Spending> Spendings { get; set; }
 
 
