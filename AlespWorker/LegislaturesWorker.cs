@@ -9,11 +9,7 @@ namespace Alesp.Worker
 
         private HttpClient Client = new();
         private HtmlParser Parser = new();
-        //private AlespDbContext _context;
-        //public LegislaturesWorker(AlespDbContext context)
-        //{
-        //    _context = context;
-        //}
+      
         public async Task GetLesgilatures()
         {
 
