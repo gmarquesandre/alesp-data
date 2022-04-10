@@ -51,5 +51,10 @@ namespace Alesp.Shared.Enums
         [Display(Name = "D: Dispensado(a) nos termos do artigo 8º do Ato da Mesa nº 3, de 17 de março de 2020, e nos termos do artigo 7º, § 4º, do Ato do Presidente nº 52, de 30 de julho de 2020.")]
         Covid = 15,
 
+
+        [Display(Name = "D: Dispensado(a) nos termos do artigo 8º do Ato da Mesa nº 3, de 17 de março de 2020, e nos termos do artigo 7º, § 4º, do Ato do Presidente nº 52, de 30 de julho de 2020.")]
+        Unknown = 99,
+
+
     }
 }

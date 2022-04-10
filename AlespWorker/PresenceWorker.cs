@@ -38,16 +38,17 @@ namespace Alesp.Worker
             var response = await _client.GetAsync("https://www.al.sp.gov.br/sigp-portal/default.xhtml");
 
             var document = await _parser.ParseDocumentAsync(await response.Content.ReadAsStringAsync());
-
+            int count = 0;
             var listCongressPresence = document.QuerySelectorAll("#formFiltros\\:listaDeputados option");
             foreach (var congressPerson in congressPeople)
             {
-
+                count++;
+                Console.WriteLine($"{count} de {congressPeople.Count}");
                 //await _client.GetAsync("https://www.al.sp.gov.br/alesp/presenca-plenario/");
                 string valueSearch = "";
                 foreach (var rowCongressPresence in listCongressPresence.Skip(1))
                 {
-                    if (rowCongressPresence.TextContent.ToLower() == congressPerson.Name.ToLower())
+                    if (rowCongressPresence.TextContent.ToLower() == congressPerson.Name!.ToLower())
                     {
                         valueSearch = rowCongressPresence.GetAttribute("value")!;
                         break;
@@ -67,12 +68,20 @@ namespace Alesp.Worker
                     DateTime endTime = legislature.EndDate;
                     int i = 0;
 
-
-
+                    var listPresenceRegistered = _context.Presences.Where(a => a.CongressPersonId == congressPerson.Id).Select(b => b.Date).Distinct().ToList();
+                    DateTime lastPresenceDate = listPresenceRegistered.DefaultIfEmpty(new DateTime(1900, 1, 1)).Max().AddMonths(-1);
                     while (startDate.AddMonths(i) <= endTime && startDate.AddMonths(i) < DateTime.Now)
                     {
-
+                        
                         DateTime dateRef = startDate.AddMonths(i);
+
+                        if (dateRef < lastPresenceDate)
+                        {
+                            i++;
+                            continue;
+                        }
+
+
                         document = await _parser.ParseDocumentAsync(await response.Content.ReadAsStringAsync());
 
                         string viewState = document!.QuerySelector("input[name='javax.faces.ViewState']")!.GetAttribute("value")!;
@@ -97,18 +106,23 @@ namespace Alesp.Worker
                             string sessionType = infos[1].TextContent;
                             string presence = infos[2].TextContent;
 
+
+                            ELegislativeSessionType legislativeSession = SessionDictionary.TryGetValue(sessionType, out legislativeSession)? legislativeSession : ELegislativeSessionType.Unknown;
+                            EPresenceStatus presenceStatus = PresenceStatusDictionary.TryGetValue(presence, out presenceStatus) ? presenceStatus : EPresenceStatus.Unknown;
+                            
                             var newPresence = new Presence()
                             {
                                 CongressPersonId = congressPerson.Id,
-                                Date = new DateTime(startDate.Year, startDate.Month, day),
-                                LegislativeSessionType = SessionDictionary[sessionType],
-                                PresenceStatus = PresenceStatusDictionary[presence]
+                                Date = new DateTime(dateRef.Year, dateRef.Month, day),
+                                LegislativeSessionType = legislativeSession,
+                                PresenceStatus = presenceStatus
                             };
 
 
                             await InsertOrUpdatePresence(newPresence);
-
+                            
                         }
+                        i++;
                     }
 
                 }
@@ -122,6 +136,7 @@ namespace Alesp.Worker
             if(presence == null)
                 _context.Presences.Add(newPresence);
 
+            await _context.SaveChangesAsync();
         }
 
         public Dictionary<string, ELegislativeSessionType> SessionDictionary = new Dictionary<string, ELegislativeSessionType>()
@@ -131,6 +146,8 @@ namespace Alesp.Worker
             {"R", ELegislativeSessionType.Meeting},
             {"I", ELegislativeSessionType.Inaugural},
             {"PI", ELegislativeSessionType.PreInaugural},
+            {"RE", ELegislativeSessionType.Unknown},
+            {"P", ELegislativeSessionType.Unknown},
         };
         public Dictionary<string, EPresenceStatus> PresenceStatusDictionary = new Dictionary<string, EPresenceStatus>()
         {

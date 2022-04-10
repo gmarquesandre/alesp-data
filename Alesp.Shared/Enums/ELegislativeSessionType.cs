@@ -13,6 +13,8 @@ namespace Alesp.Shared.Enums
         [Display(Name = "I - Inaugural")]
         Inaugural = 3,
         [Display(Name = "PI - Preparatória Inaugural")]
-        PreInaugural = 4
+        PreInaugural = 4,
+        [Display(Name = "PI - Preparatória Inaugural")]
+        Unknown = 99
     }
 }
