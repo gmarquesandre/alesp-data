@@ -31,7 +31,7 @@ internal class SpendingWorker
 
         congressPeople = congressPeople.Where(a => a.Legislatures.Count > 0).ToList();
 
-        await GetSpendingWithCongressPeopleList(congressPeople);
+        await GetSpendingWithCongressPeopleList(congressPeople.Skip(153).ToList());
 
     }
     public async Task GetCongressPersonAllSpendingsWithId(int id)
@@ -76,12 +76,18 @@ internal class SpendingWorker
 
                 await GetSpendingWithCongressPersonAndLegislatures(congressPerson);
             }
+            catch(HttpRequestException ex)
+            {
+
+                Console.WriteLine("Error " + ex.Message);
+                Thread.Sleep(30000);
+                await GetSpendingWithCongressPeopleList(congressPeople.Skip(count - 1).ToList());
+
+            }
             catch (Exception ex)
             {
                 Console.WriteLine("Error " + ex.Message);
-                Thread.Sleep(30000);
-                count = 0;
-                await GetSpendingWithCongressPeopleList(congressPeople.Skip(count).ToList());
+                throw new Exception($"Erro ao buscar dados do parlamentar Id Interno: {congressPerson.Id}, Nome {congressPerson.Name}");
             }
 
         }
@@ -94,7 +100,6 @@ internal class SpendingWorker
           
             var listDatesSpending = _context.Spendings.Where(a => a.CongressPersonId == congressPerson.Id).Select(b => b.Date).Distinct().ToList();
             DateTime lastSpendingDate = listDatesSpending.DefaultIfEmpty(new DateTime(1900, 1, 1)).Max().AddMonths(-1);
-            DateTime firstSpendingDate = listDatesSpending.DefaultIfEmpty(new DateTime(2100, 1, 1)).Min().AddMonths(1);
             
 
             int i = 0;
@@ -105,14 +110,14 @@ internal class SpendingWorker
             {
 
                 DateTime dateRef = startDate.AddMonths(i);
-
-                Console.WriteLine($"Month {dateRef}, Last {lastMonth}");
-                
-                if (dateRef > firstSpendingDate && dateRef < lastSpendingDate)
+                                
+                if (dateRef < lastSpendingDate)
                 {
                     i++;
                     continue;
                 }
+
+                Console.WriteLine($"Month {dateRef}, Last {lastMonth}");
 
                 var response = await Client.GetAsync($"https://www.al.sp.gov.br/deputado/contas/?matricula={congressPerson.AlespId}&mes={dateRef.Month}&ano={dateRef.Year}&cnpjOuCpf=&tipo=naturezas");
                 string responseString = await response.Content.ReadAsStringAsync();
@@ -152,7 +157,8 @@ internal class SpendingWorker
             Date = new DateTime(dateRef.Year, dateRef.Month, 1),
             Type = (ESpendingType)type,
             Value = value,
-            CongressPerson = congressPerson
+            //CongressPerson = congressPerson,
+            CongressPersonId = congressPerson.Id
         };
 
 
@@ -177,13 +183,12 @@ internal class SpendingWorker
         {
             Identification = identification,
             Name = providerName,
-            IdentificationType = GetIdentificationType(identification)
+            IdentificationType = GetIdentificationType(identification),            
         };
 
         var company = await _providerWorker.InsertOrUpdateProviderAndReturn(companyObj);
 
-        newSpending.Provider = company;
-
+        newSpending.ProviderId = company.Id;
         await _context.Spendings.AddAsync(newSpending);
 
         await _context.SaveChangesAsync();
@@ -191,17 +196,22 @@ internal class SpendingWorker
     private static EProviderIdentificationType GetIdentificationType(string identification)
     {
         IdentificationValidator validator = new IdentificationValidator();
-
-        if (validator.IsCnpj(identification))
+        try
         {
-            return EProviderIdentificationType.Cnpj;
-        }
-        else if (validator.IsCpf(identification))
-        {
-            return EProviderIdentificationType.Cpf;
-        }
+            if (validator.IsCnpj(identification))
+            {
+                return EProviderIdentificationType.Cnpj;
+            }
+            else if (validator.IsCpf(identification))
+            {
+                return EProviderIdentificationType.Cpf;
+            }
 
-        Console.WriteLine($"{identification} não é CPF nem CNPJ");
-        return EProviderIdentificationType.Unknown;
+            Console.WriteLine($"{identification} não é CPF nem CNPJ");
+            return EProviderIdentificationType.Unknown;
+        }
+        catch {
+            return EProviderIdentificationType.Unknown;
+        }
     }
 }

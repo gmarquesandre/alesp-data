@@ -18,6 +18,7 @@ public class AlespDbContext : DbContext
         public DbSet<Legislature> Legislatures { get; set; }
         public DbSet<Provider> Providers { get; set; }
         public DbSet<Spending> Spendings { get; set; }
+        public DbSet<Presence> Presences { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -37,6 +38,11 @@ public class AlespDbContext : DbContext
             modelBuilder.Entity<Spending>()
                 .HasOne(b => b.CongressPerson)
                 .WithMany();
+
+            modelBuilder.Entity<Presence>()
+                .HasIndex(p => new { p.Date, p.CongressPersonId })
+                .IsUnique(true);
+
 
     }
 
