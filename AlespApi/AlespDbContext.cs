@@ -47,13 +47,13 @@ public class AlespDbContext : DbContext
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
-        {
-            IConfigurationRoot configuration = new ConfigurationBuilder()
-            .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
-            .AddJsonFile("appsettings.json")
-            .Build();
+    {
+        IConfigurationRoot configuration = new ConfigurationBuilder()
+        .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+        .AddJsonFile("appsettings.json")
+        .Build();
 
-            options.UseSqlServer(configuration.GetConnectionString("Default"));
-        }
+        options.UseSqlServer(configuration.GetConnectionString("Default"));
+    }
 
 }

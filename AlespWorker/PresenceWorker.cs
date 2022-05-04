@@ -69,7 +69,7 @@ namespace Alesp.Worker
                     int i = 0;
 
                     var listPresenceRegistered = _context.Presences.Where(a => a.CongressPersonId == congressPerson.Id).Select(b => b.Date).Distinct().ToList();
-                    DateTime lastPresenceDate = listPresenceRegistered.DefaultIfEmpty(new DateTime(1900, 1, 1)).Max().AddMonths(-1);
+                    DateTime lastPresenceDate = listPresenceRegistered.DefaultIfEmpty(new DateTime(1900, 1, 1)).Max();
                     while (startDate.AddMonths(i) <= endTime && startDate.AddMonths(i) < DateTime.Now)
                     {
                         
@@ -84,7 +84,15 @@ namespace Alesp.Worker
 
                         document = await _parser.ParseDocumentAsync(await response.Content.ReadAsStringAsync());
 
-                        string viewState = document!.QuerySelector("input[name='javax.faces.ViewState']")!.GetAttribute("value")!;
+                        var viewStateElement = document!.QuerySelector("input[name='javax.faces.ViewState']");
+
+                        if (viewStateElement == null)
+                        {
+                            i++;
+                            continue;
+                        }
+
+                        string viewState = viewStateElement!.GetAttribute("value")!;
 
                         var form = new List<KeyValuePair<string, string>>
                         {

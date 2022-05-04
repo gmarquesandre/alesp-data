@@ -31,7 +31,7 @@ internal class SpendingWorker
 
         congressPeople = congressPeople.Where(a => a.Legislatures.Count > 0).ToList();
 
-        await GetSpendingWithCongressPeopleList(congressPeople.Skip(153).ToList());
+        await GetSpendingWithCongressPeopleList(congressPeople);
 
     }
     public async Task GetCongressPersonAllSpendingsWithId(int id)
